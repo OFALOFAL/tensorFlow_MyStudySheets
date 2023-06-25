@@ -7,7 +7,7 @@ import os
 import itertools
 import numpy as np
 import zipfile
-import datetime
+from datetime import datetime
 
 def get_random_img(target_dir, target_class, seed=-1, verbose=1):
   """
