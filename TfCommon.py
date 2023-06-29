@@ -301,7 +301,7 @@ def calculate_results(y_true, y_pred):
                   "f1": model_f1}
   return model_results
 
-def compare_historys(original_history, new_history, initial_epochs=5, verbose=1):
+def compare_hystories(original_history, new_history, initial_epochs=5, verbose=1):
     """
     Compares two TensorFlow model History objects.
     
