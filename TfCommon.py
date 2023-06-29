@@ -301,19 +301,22 @@ def calculate_results(y_true, y_pred):
                   "f1": model_f1}
   return model_results
 
-def compare_historys(original_history, new_history, initial_epochs=5):
+def compare_historys(original_history, new_history, initial_epochs=5, verbose=1):
     """
     Compares two TensorFlow model History objects.
     
     Args:
       original_history: History object from original model (before new_history)
       new_history: History object from continued model training (after original_history)
-      initial_epochs: Number of epochs in original_history (new_history plot starts from here) 
+      initial_epochs: Number of epochs in original_history (new_history plot starts from here)
+      verbose: Decides if function prints out additional information
     """
-    
     # Get original history measurements
     acc = original_history.history["accuracy"]
     loss = original_history.history["loss"]
+
+    if verbose:
+      print(len(acc))
 
     val_acc = original_history.history["val_accuracy"]
     val_loss = original_history.history["val_loss"]
@@ -324,6 +327,10 @@ def compare_historys(original_history, new_history, initial_epochs=5):
 
     total_val_acc = val_acc + new_history.history["val_accuracy"]
     total_val_loss = val_loss + new_history.history["val_loss"]
+
+    if verbose:
+      print(len(total_acc))
+      print(total_acc)
 
     # Make plots
     plt.figure(figsize=(8, 8))
