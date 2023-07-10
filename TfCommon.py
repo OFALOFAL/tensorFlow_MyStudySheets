@@ -359,9 +359,9 @@ def count_trainable_layers(model, ret=0):
     model: Model to count the layers on.
     ret: Decides if return value is returned, defaulted to 0 for no return
   """
-    trainable_layers = [0, 0]
-    for layer_number, layer in enumerate(model.layers):
-      trainable_layers[layer.trainable]+=1
-    print(f'There are {trainable_layers[0]} untrainable layers and {trainable_layers[1]} trainable layers in model')
-    if ret:
-      return trainable_layers
+  trainable_layers = [0, 0]
+  for layer_number, layer in enumerate(model.layers):
+    trainable_layers[layer.trainable]+=1
+  print(f'There are {trainable_layers[0]} untrainable layers and {trainable_layers[1]} trainable layers in model')
+  if ret:
+    return trainable_layers
