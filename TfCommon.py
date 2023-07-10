@@ -302,55 +302,55 @@ def calculate_results(y_true, y_pred):
   return model_results
 
 def compare_hystories(original_history, new_history, initial_epochs=5, verbose=1):
-    """
-    Compares two TensorFlow model History objects.
-    
-    Args:
-      original_history: History object from original model (before new_history)
-      new_history: History object from continued model training (after original_history)
-      initial_epochs: Number of epochs in original_history (new_history plot starts from here)
-      verbose: Decides if function prints out additional information
-    """
-    # Get original history measurements
-    acc = original_history.history["accuracy"]
-    loss = original_history.history["loss"]
+  """
+  Compares two TensorFlow model History objects.
+  
+  Args:
+    original_history: History object from original model (before new_history)
+    new_history: History object from continued model training (after original_history)
+    initial_epochs: Number of epochs in original_history (new_history plot starts from here)
+    verbose: Decides if function prints out additional information
+  """
+  # Get original history measurements
+  acc = original_history.history["accuracy"]
+  loss = original_history.history["loss"]
 
-    if verbose:
-      print(len(acc))
+  if verbose:
+    print(len(acc))
 
-    val_acc = original_history.history["val_accuracy"]
-    val_loss = original_history.history["val_loss"]
+  val_acc = original_history.history["val_accuracy"]
+  val_loss = original_history.history["val_loss"]
 
-    # Combine original history with new history
-    total_acc = acc + new_history.history["accuracy"]
-    total_loss = loss + new_history.history["loss"]
+  # Combine original history with new history
+  total_acc = acc + new_history.history["accuracy"]
+  total_loss = loss + new_history.history["loss"]
 
-    total_val_acc = val_acc + new_history.history["val_accuracy"]
-    total_val_loss = val_loss + new_history.history["val_loss"]
+  total_val_acc = val_acc + new_history.history["val_accuracy"]
+  total_val_loss = val_loss + new_history.history["val_loss"]
 
-    if verbose:
-      print(len(total_acc))
-      print(total_acc)
+  if verbose:
+    print(len(total_acc))
+    print(total_acc)
 
-    # Make plots
-    plt.figure(figsize=(8, 8))
-    plt.subplot(2, 1, 1)
-    plt.plot(total_acc, label='Training Accuracy')
-    plt.plot(total_val_acc, label='Validation Accuracy')
-    plt.plot([initial_epochs-1, initial_epochs-1],
-              plt.ylim(), label='Start Fine Tuning') # reshift plot around epochs
-    plt.legend(loc='lower right')
-    plt.title('Training and Validation Accuracy')
+  # Make plots
+  plt.figure(figsize=(8, 8))
+  plt.subplot(2, 1, 1)
+  plt.plot(total_acc, label='Training Accuracy')
+  plt.plot(total_val_acc, label='Validation Accuracy')
+  plt.plot([initial_epochs-1, initial_epochs-1],
+            plt.ylim(), label='Start Fine Tuning') # reshift plot around epochs
+  plt.legend(loc='lower right')
+  plt.title('Training and Validation Accuracy')
 
-    plt.subplot(2, 1, 2)
-    plt.plot(total_loss, label='Training Loss')
-    plt.plot(total_val_loss, label='Validation Loss')
-    plt.plot([initial_epochs-1, initial_epochs-1],
-              plt.ylim(), label='Start Fine Tuning') # reshift plot around epochs
-    plt.legend(loc='upper right')
-    plt.title('Training and Validation Loss')
-    plt.xlabel('epoch')
-    plt.show()
+  plt.subplot(2, 1, 2)
+  plt.plot(total_loss, label='Training Loss')
+  plt.plot(total_val_loss, label='Validation Loss')
+  plt.plot([initial_epochs-1, initial_epochs-1],
+            plt.ylim(), label='Start Fine Tuning') # reshift plot around epochs
+  plt.legend(loc='upper right')
+  plt.title('Training and Validation Loss')
+  plt.xlabel('epoch')
+  plt.show()
   
 def count_trainable_layers(model, ret=0):
   """
