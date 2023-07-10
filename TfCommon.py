@@ -351,3 +351,17 @@ def compare_hystories(original_history, new_history, initial_epochs=5, verbose=1
     plt.title('Training and Validation Loss')
     plt.xlabel('epoch')
     plt.show()
+  
+def count_trainable_layers(model, ret=0):
+  """
+  Prints out number of trainable and nontrainable layers in model
+  Args:
+    model: Model to count the layers on.
+    ret: Decides if return value is returned, defaulted to 0 for no return
+  """
+    count_trainable_layers = [0, 0]
+    for layer_number, layer in enumerate(model.layers):
+      count_trainable_layers[layer.trainable]+=1
+    print(f'There are {count_trainable_layers[0]} untrainable layers and {count_trainable_layers[1]} trainable layers in model')
+    if ret:
+      return count_trainable_layers
