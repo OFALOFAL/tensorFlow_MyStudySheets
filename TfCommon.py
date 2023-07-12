@@ -8,6 +8,7 @@ import itertools
 import numpy as np
 import zipfile
 from datetime import datetime
+from sklearn.metrics import confusion_matrix
 
 def get_random_img(target_dir, target_class, seed=-1, verbose=1):
   """
