@@ -173,7 +173,7 @@ def sigmoid(x):
 def reLu(x):
   return tf.maximum(x, 0)
 
-def confiusion_matrix_graph(y_true, y_pred, text_size=15, figsize=(10, 7), classes=False):
+def confiusion_matrix_graph(y_true, y_pred, text_size=15, figsize=(10, 7), classes=False, savefig=False):
   """Makes a labelled confusion matrix comparing predictions and ground truth labels.
 
   If classes is passed, confusion matrix will be labelled, if not, integer class values
@@ -233,6 +233,9 @@ def confiusion_matrix_graph(y_true, y_pred, text_size=15, figsize=(10, 7), class
              horizontalalignment='center',
              color='white' if cm[i, j] > threshold else 'black',
              size=text_size)
+  # Save the figure to the current working directory
+  if savefig:
+    fig.savefig("confusion_matrix.png")
 
 def create_tensorboard_callback(dir_name, experiment_name):
   """
