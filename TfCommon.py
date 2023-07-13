@@ -10,6 +10,17 @@ import zipfile
 from datetime import datetime
 from sklearn.metrics import confusion_matrix
 
+def autolabel(rects): # From: https://matplotlib.org/examples/api/barchart_demo.html
+  """
+  Attach a text label above each bar displaying its height (it's value).
+  Needs ax variable
+  """
+  for rect in rects:
+    width = rect.get_width()
+    ax.text(width+0.02, rect.get_y() + rect.get_height(),
+            f"{width:.2f}",
+            ha='center', va='bottom')
+
 def get_random_img(target_dir, target_class, seed=-1, verbose=1):
   """
   Get random image from directory.
