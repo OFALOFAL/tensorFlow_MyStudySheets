@@ -10,6 +10,28 @@ import zipfile
 from datetime import datetime
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+import time
+
+def pred_timer(model, samples):
+  """
+  Times how long a model takes to make predictions on samples.
+  
+  Args:
+  ----
+  model = a trained model
+  sample = a list of samples
+
+  Returns:
+  ----
+  total_time = total elapsed time for model to make predictions on samples
+  time_per_pred = time in seconds per single sample
+  """
+  start_time = time.perf_counter() # get start time
+  model.predict(samples) # make predictions
+  end_time = time.perf_counter() # get finish time
+  total_time = end_time-start_time # calculate how long predictions took to make
+  time_per_pred = total_time/len(val_sentences) # find prediction time per sample
+  return total_time, time_per_pred
 
 def predict_on_sentence(model, sentence):
   """
