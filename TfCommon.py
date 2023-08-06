@@ -11,6 +11,16 @@ from datetime import datetime
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
+def predict_on_sentence(model, sentence):
+  """
+  Uses model to make a prediction on sentence.
+  Returns the sentence, the predicted label and the prediction probability.
+  """
+  pred_prob = model.predict([sentence])
+  pred_label = tf.squeeze(tf.round(pred_prob)).numpy()
+  print(f"Pred: {pred_label}", "(real disaster)" if pred_label > 0 else "(not real disaster)", f"Prob: {pred_prob[0][0]}")
+  print(f"Text:\n{sentence}")
+
 def calculate_results(y_true, y_pred):
   """
   Calculates model accuracy, precision, recall and f1 score of a binary classification model.
