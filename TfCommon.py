@@ -12,6 +12,26 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import time
 
+def make_windows(x, window_size=7, horizon=1):
+  """
+  Turns a 1D array into a 2D array of sequential windows of window_size.
+  """
+  # 1. Create a window of specific window_size (add the horizon on the end for later labelling)
+  window_step = np.expand_dims(np.arange(window_size+horizon), axis=0)
+  # print(f"Window step:\n {window_step}")
+
+  # 2. Create a 2D array of multiple window steps (minus 1 to account for 0 indexing)
+  window_indexes = window_step + np.expand_dims(np.arange(len(x)-(window_size+horizon-1)), axis=0).T # create 2D array of windows of size window_size
+  # print(f"Window indexes:\n {window_indexes[:3], window_indexes[-3:], window_indexes.shape}")
+
+  # 3. Index on the target array (time series) with 2D array of multiple window steps
+  windowed_array = x[window_indexes]
+
+  # 4. Get the labelled windows
+  windows, labels = get_labelled_windows(windowed_array, horizon=horizon)
+
+  return windows, labels
+
 def plot_time_series(timesteps, values, format='.', start=0, end=None, label=None):
   """
   Plots a timesteps (a series of points in time) against values (a series of values across timesteps).
