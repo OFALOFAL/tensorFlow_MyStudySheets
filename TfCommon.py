@@ -188,65 +188,88 @@ def get_random_img(target_dir, target_class, seed=-1, verbose=1):
     print(f'Image name: {random_img_path}')
   return img
 
-def plot_loss_curves(histories):
+def plot_hist_curves(histories, metrics=[], val_data=True, models_names=None, fig_size=(5, 2)):
   """
-  Plot histories of many models to compare their loss and accuracy curves.
+  Plot histories of passed metrics of many models to compare their loss and accuracy curves.
   Args:
-    histories: passed is as list of model histories (any length)
+    histories: passed is as list of model histories (any length>0)
+    metrics: passed is as list of metrics (different than loss) to plot (any length)
+    val_data: True if fit methods of models used validation_data
+    fig_size: Sets size of every plot
   """
+  metrics_copy= metrics.copy()+['loss']
+
+  def set_ax_size(w,h, ax=None):
+    """ w, h: width, height in inches """
+    if not ax: ax=plt.gca()
+    l = ax.figure.subplotpars.left
+    r = ax.figure.subplotpars.right
+    t = ax.figure.subplotpars.top
+    b = ax.figure.subplotpars.bottom
+    figw = float(w)/(r-l)
+    figh = float(h)/(t-b)
+    ax.figure.set_size_inches(figw, figh)
+
   if len(histories) > 1:
-    plt.figure(figsize=(5*len(histories), 10))
-    figure, axis = plt.subplots(2, len(histories))
-    figure.suptitle('Models comparison\n', fontweight ="bold")
+    if models_names is None:
+      models_names=[]
+      for x in range(len(histories)):
+        models_names.append('model'+str(x))
+    if len(models_names) > len(histories):
+      for x in range(len(models_names) - len(histories)):
+        models_names.pop()
+    if len(models_names) < len(histories):
+      for x in range(len(histories) - len(models_names)):
+        models_names.append('model'+str(len(histories)+x))
+
+    fig, axis = plt.subplots(len(metrics_copy), len(histories))
+    fig.suptitle('Models comparison\n', fontweight ="bold")
     for x, history in enumerate(histories):
-      loss = history.history['loss']
-      val_loss = history.history['val_loss']
+      for y, metric_name in enumerate(metrics_copy):
+        metric = history.history[metric_name]
+        if val_data:
+          val_metric = history.history['val_'+metric_name]
+        else:
+          val_metric=None
 
-      accuracy = history.history['accuracy']
-      val_accuracy = history.history['val_accuracy']
+        epochs = range(len(history.history[metric_name]))
 
-      epochs = range(len(history.history['loss']))
+        axis[y, x].plot(epochs, metric, label='train_'+metric_name)
+        if val_data:
+          axis[y, x].plot(epochs, val_metric, label='val_'+metric_name)
 
-      axis[0, x].plot(epochs, loss, label='training_loss')
-      axis[0, x].plot(epochs, val_loss, label='val_loss')
-      axis[0, x].set_title(f'Loss m{x}')
-      if x==0:
-        axis[0, x].tick_params(bottom = False, labelbottom = False)
-        axis[0, x].legend()
-      else:
-        axis[0, x].tick_params(left = False, right = False, labelleft = False,
-                labelbottom = False, bottom = False)
-
-      axis[1, x].plot(epochs, accuracy, label='training_accuracy')
-      axis[1, x].plot(epochs, val_accuracy, label='val_accuracy')
-      axis[1, x].set_title(f'Accuracy m{x}')
-      if x==0:
-        axis[1, x].set_xlabel('Epochs')
-        axis[1, x].legend()
-      else:
-        axis[1, x].tick_params(left = False, right = False, labelleft = False)
+        set_ax_size(fig_size[0]*len(histories), fig_size[1]+len(metrics))
+        axis[y, x].set_title(f'{metric_name} {models_names[x]}')
+        if x==0:
+          if y==len(metrics_copy)-1:
+            axis[y, x].set_xlabel('Epochs')
+          else:
+            axis[y, x].tick_params(top=False, labeltop=False, bottom=False, labelbottom=False)
+          axis[y, x].legend()
+        else:
+          if y==len(metrics_copy)-1:
+            axis[y, x].tick_params(top=False, labeltop=False, left=False, right=False, labelleft=False)
+          else:
+            axis[y, x].tick_params(top=False, labeltop=False, left=False, right=False, labelleft=False,
+                    labelbottom=False, bottom=False)
   else:
     history = histories[0]
-    loss = history.history['loss']
-    val_loss = history.history['val_loss']
+    for y, metric_name in enumerate(metrics_copy):
+      metric = history.history[metric_name]
+      if val_data:
+        val_metric = history.history['val_'+metric_name]
+      else:
+          val_metric=None
 
-    accuracy = history.history['accuracy']
-    val_accuracy = history.history['val_accuracy']
+      epochs = range(len(history.history[metric_name]))
 
-    epochs = range(len(history.history['loss']))
-
-    plt.plot(epochs, loss, label='training_loss')
-    plt.plot(epochs, val_loss, label='val_loss')
-    plt.title('Loss')
-    plt.xlabel('Epochs')
-    plt.legend()
-
-    plt.figure()
-    plt.plot(epochs, accuracy, label='training_accuracy')
-    plt.plot(epochs, val_accuracy, label='val_accuracy')
-    plt.title('Accuracy')
-    plt.xlabel('Epochs')
-    plt.legend()
+      plt.figure(figsize=fig_size)
+      plt.plot(epochs, metric, label='training_'+metric_name)
+      if val_data:
+        plt.plot(epochs, val_metric, label='val_'+metric_name)
+      plt.title(metric_name)
+      plt.xlabel('Epochs')
+      plt.legend()
 
     
 def diffrent_data_comparison(data_x, data_y, title_x='DataX', title_y='DataY', batch_size=32, seed=-1):
