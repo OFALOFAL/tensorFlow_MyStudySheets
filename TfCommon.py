@@ -12,6 +12,13 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import time
 
+def make_ensemble_preds(ensemble_models, data):
+  ensemble_preds = []
+  for model in ensemble_models:
+    preds = model.predict(data)
+    ensemble_preds.append(preds)
+  return tf.constant(tf.squeeze(ensemble_preds))
+
 def get_ensemble_models(horizon=HORIZON, 
                         train_data=train_dataset,
                         test_data=test_dataset,
