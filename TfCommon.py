@@ -12,6 +12,59 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import time
 
+def get_ensemble_models(horizon=HORIZON, 
+                        train_data=train_dataset,
+                        test_data=test_dataset,
+                        num_iter=10, 
+                        num_epochs=100, 
+                        loss_fns=["mae", "mse", "mape"]):
+  """
+  Returns a list of num_iter models each trained on MAE, MSE and MAPE loss.
+
+  For example, if num_iter=10, a list of 30 trained models will be returned:
+  10 * len(["mae", "mse", "mape"]).
+  """
+  ensemble_models = []
+
+  for i in range(num_iter):
+    for loss_function in loss_fns:
+      print(f"Optimizing model by reducing: {loss_function} for {num_epochs} epochs, model number: {i}")
+
+      model = tf.keras.Sequential([
+        layers.Dense(128, kernel_initializer="he_normal", activation="relu"), 
+        layers.Dense(128, kernel_initializer="he_normal", activation="relu"),
+        layers.Dense(HORIZON)                                 
+      ])
+
+      model.compile(
+          loss=loss_function,
+          optimizer=tf.keras.optimizers.Adam(),
+          metrics=["mae", "mse"]
+      )
+      
+      model.fit(
+          train_data,
+          epochs=num_epochs,
+          verbose=0,
+          validation_data=test_data,
+          callbacks=[
+              tf.keras.callbacks.EarlyStopping(
+                  monitor="val_loss",
+                  patience=200,
+                  restore_best_weights=True
+              ),
+              tf.keras.callbacks.ReduceLROnPlateau(
+                  monitor="val_loss",
+                  patience=100,
+                  verbose=1
+              )
+          ]
+      )
+      
+      ensemble_models.append(model)
+
+  return ensemble_models
+
 def make_windows(x, window_size=7, horizon=1):
   """
   Turns a 1D array into a 2D array of sequential windows of window_size.
