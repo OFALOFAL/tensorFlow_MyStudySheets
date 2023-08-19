@@ -31,9 +31,9 @@ def make_ensemble_preds(ensemble_models, data):
     ensemble_preds.append(preds)
   return tf.constant(tf.squeeze(ensemble_preds))
 
-def get_ensemble_models(horizon=HORIZON, 
-                        train_data=train_dataset,
-                        test_data=test_dataset,
+def get_ensemble_models(horizon, 
+                        train_data,
+                        test_data,
                         num_iter=10, 
                         num_epochs=100, 
                         loss_fns=["mae", "mse", "mape"]):
