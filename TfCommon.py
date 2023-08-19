@@ -12,6 +12,18 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import time
 
+def evaluate_preds(y_true, y_pred):
+  y_true = tf.cast(y_true, dtype=tf.float32)
+  y_pred = tf.cast(y_pred, dtype=tf.float32)
+  ev_dict = {
+      'MAE': keras.metrics.mean_absolute_error(y_true, y_pred).numpy(),
+      'MASE': mean_absolute_scaled_error(y_true, y_pred).numpy(),
+      'MSE': keras.metrics.mean_squared_error(y_true, y_pred).numpy(),
+      'rMSE': tf.math.sqrt(keras.metrics.mean_squared_error(y_true, y_pred)).numpy(),
+      'MAPE': keras.metrics.mean_absolute_percentage_error(y_true, y_pred).numpy(),
+  }
+  return ev_dict
+
 def make_ensemble_preds(ensemble_models, data):
   ensemble_preds = []
   for model in ensemble_models:
