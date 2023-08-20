@@ -12,6 +12,32 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import time
 
+def make_future_forecast(into_future, model, values, window_size, verbose=2):
+  """
+  Makes future forecasts into_future steps after values ends.
+
+  Returns future forecasts as list of floats.
+  """
+  values_copy = values.copy()
+  future_forecast = []
+
+  for x in range(into_future):
+    pred = model.predict(np.expand_dims(values_copy[-window_size:], axis=0))
+    if verbose==2:
+      print(f'Iterration {x}: \n\tvalues: {values_copy[-window_size:]} \n\tprediction: {pred}')
+
+    values_copy = np.append(values_copy, pred)
+    future_forecast.append(pred)
+   
+  if verbose:
+    print()
+    print('Predictions:')
+    print('-'*15)
+    for x, pred in enumerate(future_forecast):
+      print(f'Day {x+1}: {pred}')
+
+  return future_forecast
+
 def evaluate_preds(y_true, y_pred):
   y_true = tf.cast(y_true, dtype=tf.float32)
   y_pred = tf.cast(y_pred, dtype=tf.float32)
